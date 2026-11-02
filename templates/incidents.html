@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incidents - AI Student Mobile Phone Detection System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="header">
+  <div>
+    <h1>Incidents</h1>
+    <nav class="nav">
+      <a href="/">Dashboard</a>
+      <a href="/incidents">Incidents</a>
+    </nav>
+  </div>
+  <div class="status">
+    <span class="dot"></span>
+    <span>{{ incidents|length }} recorded</span>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <div class="controls">
+      <button id="refreshIncidents">Refresh</button>
+      <button id="clearIncidents">Clear All</button>
+    </div>
+    <p class="muted">Each incident is logged when a phone is detected near a person (rate-limited to avoid spam). Snapshot images are saved.</p>
+  </section>
+
+  <section class="card">
+    <div id="incidentsWrap">
+      <table class="inc-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Camera</th>
+            <th>People</th>
+            <th>Phones</th>
+            <th>Warnings</th>
+            <th>Snapshot</th>
+          </tr>
+        </thead>
+        <tbody id="incidentsBody"></tbody>
+      </table>
+      <p id="emptyMsg" class="muted" style="display:none;">No incidents recorded yet.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+async function loadIncidents(){
+  const res = await fetch('/api/incidents');
+  const data = await res.json();
+  const body = document.getElementById('incidentsBody');
+  body.innerHTML = '';
+  const list = data.incidents || [];
+  document.getElementById('emptyMsg').style.display = list.length ? 'none' : 'block';
+  list.forEach(inc => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${inc.timestamp}</td>
+      <td>Camera ${inc.camera_index}</td>
+      <td>${inc.people}</td>
+      <td>${inc.phones}</td>
+      <td>${inc.warnings}</td>
+      <td><a href="/static/${inc.image}" target="_blank"><img src="/static/${inc.image}" class="thumb" alt="snapshot"></a></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+document.getElementById('refreshIncidents').addEventListener('click', loadIncidents);
+document.getElementById('clearIncidents').addEventListener('click', async () => {
+  if(!confirm('Clear all incidents?')) return;
+  await fetch('/incidents/clear', {method:'POST'});
+  loadIncidents();
+});
+loadIncidents();
+</script>
+</body>
+</html>

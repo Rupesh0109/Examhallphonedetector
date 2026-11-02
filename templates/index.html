@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Student Mobile Phone Detection System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="header">
+  <div>
+    <h1>AI Student Mobile Phone Detection System</h1>
+    <nav class="nav">
+      <a href="/">Dashboard</a>
+      <a href="/incidents">Incidents</a>
+    </nav>
+  </div>
+  <div class="status">
+    <span id="statusDot" class="dot"></span>
+    <span id="statusText">Idle</span>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h2>Camera Controls</h2>
+    <div class="controls">
+      <label for="cameraSelect">Camera:</label>
+      <select id="cameraSelect"></select>
+      <button id="refreshCameras">Refresh</button>
+      <button id="startBtn">Start Camera</button>
+      <button id="stopBtn">Stop Camera</button>
+    </div>
+    <p>Selected camera: <span id="selectedCamera">None</span></p>
+    <button id="permBtn">Request Browser Camera Permission</button>
+    <div id="browserCams"></div>
+  </section>
+
+  <section class="card">
+    <h2>Live Monitoring</h2>
+    <div class="video-wrap">
+      <img id="videoFeed" src="" alt="Live feed will appear here">
+    </div>
+    <div id="alertBox" class="alert normal">No phone detected near a person.</div>
+  </section>
+
+  <section class="card stats">
+    <h2>Statistics</h2>
+    <div class="stat-grid">
+      <div class="stat"><span id="peopleCount">0</span><label>People</label></div>
+      <div class="stat"><span id="phoneCount">0</span><label>Mobile Phones</label></div>
+      <div class="stat"><span id="warningCount">0</span><label>Potential Phone-Use</label></div>
+      <div class="stat"><span id="incidentCount">0</span><label>Total Incidents</label></div>
+    </div>
+  </section>
+
+  <section class="card note">
+    <p><strong>Note:</strong> Proximity detection does not prove active phone usage. It only indicates a phone was detected near a person.</p>
+  </section>
+</main>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
